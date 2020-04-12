@@ -37,7 +37,7 @@ def close_tab(driver, window_handle=None):
     driver.switch_to.default_content()
     if window_handle:
         switch_to_tab(driver, window_handle)
-    execute_script(driver, 'window.close()')
+    driver.close()
     if window_handle:
         switch_to_tab(driver, current_tab)
 	
@@ -131,7 +131,7 @@ def execute_script(driver, code):
 def delete_temp_files():
     if os_system().lower() == 'windows':
         temp_dirs = glob(gettempdir() + '/scoped_dir*')
-	command = ';'.join(['rd /s /q ' + temp_dir for temp_dir in temp_dirs])
+        command = ';'.join(['rd /s /q ' + temp_dir for temp_dir in temp_dirs])
         run(command, shell=True)
 
 def quit(driver=None):
@@ -146,24 +146,24 @@ try:
     driver = webdriver.Chrome()
     go_to(driver, 'https://www.google.com')
     first_tab = driver.current_window_handle
-    type_in_element(driver, '[name=q]', 'facebook', True)
+    type_in_element(driver, '[name=q]', 'facebook', enter=True)
     second_tab = open_new_tab(driver)
     go_to(driver, 'https://www.bing.com')
-    type_in_element(driver, '[name=q]', 'facebook', True)
+    type_in_element(driver, '[name=q]', 'facebook', enter=True)
     third_tab = open_new_tab(driver)
     go_to(driver, 'https://www.duckduckgo.com')
-    type_in_element(driver, '[name=q]', 'facebook', True)
+    type_in_element(driver, '[name=q]', 'facebook', enter=True)
     switch_to_tab(driver, first_tab)
-    sleep(3)
+    sleep(1)
     switch_to_tab(driver, second_tab)
-    sleep(3)
+    sleep(1)
     switch_to_tab(driver, third_tab)
-    sleep(3)
+    sleep(1)
     close_tab(driver)
     switch_to_tab(driver, second_tab)
-    sleep(3)
+    sleep(1)
     close_tab(driver, first_tab)
-    sleep(3)
+    sleep(1)
     quit(driver)
     print('Automation successfully finished!')
 except WebDriverException as e:
