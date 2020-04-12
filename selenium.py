@@ -161,7 +161,9 @@ try:
     sleep(3)
     close_tab(driver)
     switch_to_tab(driver, second_tab)
+    sleep(3)
     close_tab(driver, first_tab)
+    sleep(3)
     quit(driver)
     print('Automation successfully finished!')
 except WebDriverException as e:
