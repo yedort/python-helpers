@@ -25,14 +25,21 @@ def go_to(driver, url, tab_action=False):
 
 def open_new_tab(driver):
     execute_script(driver, 'window.open(\'\', \'_blank\')')
-    switch_to_tab(driver, driver.window_handles[-1])
-    return driver.window_handles[-1]
+    window_handle = driver.window_handles[-1]
+    switch_to_tab(driver, window_handle)
+    return window_handle
 
 def switch_to_tab(driver, window_handle):
     driver.switch_to.window(window_handle)
 
-def close_tab(driver):
+def close_tab(driver, window_handle=None):
+    current_tab = driver.current_window_handle
+    driver.switch_to.default_content()
+    if window_handle:
+        switch_to_tab(driver, window_handle)
     execute_script(driver, 'window.close()')
+    if window_handle:
+        switch_to_tab(driver, current_tab)
 	
 def wait_until_page_load(driver, timeout=15):
     try:
@@ -124,8 +131,8 @@ def execute_script(driver, code):
 def delete_temp_files():
     if os_system().lower() == 'windows':
         temp_dirs = glob(gettempdir() + '/scoped_dir*')
-        for temp_dir in temp_dirs:
-            run('rd /s /q ' + temp_dir, shell=True)
+	command = ';'.join(['rd /s /q ' + temp_dir for temp_dir in temp_dirs])
+        run(command, shell=True)
 
 def quit(driver=None):
     if driver:
@@ -137,18 +144,24 @@ def quit(driver=None):
 
 try:
     driver = webdriver.Chrome()
-    first_tab = window_handles[0]
     go_to(driver, 'https://www.google.com')
+    first_tab = driver.current_window_handle
     type_in_element(driver, '[name=q]', 'facebook', True)
     second_tab = open_new_tab(driver)
+    go_to(driver, 'https://www.bing.com')
+    type_in_element(driver, '[name=q]', 'facebook', True)
+    third_tab = open_new_tab(driver)
     go_to(driver, 'https://www.duckduckgo.com')
     type_in_element(driver, '[name=q]', 'facebook', True)
     switch_to_tab(driver, first_tab)
     sleep(3)
     switch_to_tab(driver, second_tab)
     sleep(3)
+    switch_to_tab(driver, third_tab)
+    sleep(3)
     close_tab(driver)
-    switch_to_tab(driver, first_tab)
+    switch_to_tab(driver, second_tab)
+    close_tab(driver, first_tab)
     quit(driver)
     print('Automation successfully finished!')
 except WebDriverException as e:
