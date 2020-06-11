@@ -11,7 +11,7 @@ try:
     from selenium.webdriver.common.keys import Keys
     from selenium.common.exceptions import WebDriverException, NoSuchElementException, NoSuchAttributeException
     from time import sleep
-    from inc.yedorthelpers import YedortHelpers as helpers
+    from yedorthelpers import YedortHelpers as helpers
 except ImportError as e:
     pass
     print('Python package error: ' + str(e).strip('Message: '))
